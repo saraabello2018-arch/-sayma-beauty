@@ -1,0 +1,8 @@
+{
+  "name": "sayma-beauty-store",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {"build": "echo Sayma Beauty ready"},
+  "dependencies": {"@supabase/supabase-js": "^2.57.0"}
+}
