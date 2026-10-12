@@ -1,0 +1,2 @@
+import {db,json} from './_shared.mjs';
+export async function handler(event){if(event.httpMethod==='OPTIONS')return json(200,{});if(event.httpMethod!=='GET')return json(405,{error:'Método no permitido'});try{const {data,error}=await db().from('products').select('id,name,category,description,price,stock,image_url,is_new,active').eq('active',true).order('created_at',{ascending:false});if(error)throw error;return json(200,{products:data||[]})}catch(e){return json(500,{error:e.message||'Error al cargar productos'})}}

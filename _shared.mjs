@@ -1,0 +1,6 @@
+import { createClient } from '@supabase/supabase-js';
+export const cors={"Access-Control-Allow-Origin":"*","Access-Control-Allow-Headers":"authorization,content-type","Access-Control-Allow-Methods":"GET,POST,OPTIONS"};
+export const json=(statusCode,body)=>({statusCode,headers:{...cors,'Content-Type':'application/json','Cache-Control':'no-store'},body:JSON.stringify(body)});
+export function db(){const url=process.env.SUPABASE_URL,key=process.env.SUPABASE_SERVICE_ROLE_KEY;if(!url||!key)throw new Error('Falta configurar SUPABASE_URL o SUPABASE_SERVICE_ROLE_KEY en Netlify.');return createClient(url,key,{auth:{persistSession:false,autoRefreshToken:false}})}
+export async function admin(event){const auth=event.headers.authorization||event.headers.Authorization||'';if(!auth.startsWith('Bearer '))return null;const client=db();const {data,error}=await client.auth.getUser(auth.slice(7));if(error||!data.user)return null;const allowed=(process.env.ADMIN_EMAILS||'').split(',').map(x=>x.trim().toLowerCase()).filter(Boolean);if(!allowed.includes((data.user.email||'').toLowerCase()))return null;return {client,user:data.user}}
+export function methodOk(event,method){return event.httpMethod===method||event.httpMethod==='OPTIONS'}
